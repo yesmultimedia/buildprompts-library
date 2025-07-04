@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildPrompts Library</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        .component { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .folder { background-color: #f0f0f0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>BuildPrompts Library</h1>
+    <div id="library"></div>
+    <script>
+        // Fetch the JSON file
+        fetch('component-library.json')
+            .then(response => response.json())
+            .then(data => {
+                const libraryDiv = document.getElementById('library');
+                function displayComponent(comp, level = 0) {
+                    const indent = '&nbsp;'.repeat(level * 2);
+                    if (comp.type === 'folder') {
+                        libraryDiv.innerHTML += `<div class="folder">${indent}<strong>${comp.name}</strong></div>`;
+                        if (comp.children) {
+                            comp.children.forEach(child => displayComponent(child, level + 1));
+                        }
+                    } else {
+                        libraryDiv.innerHTML += `
+                            <div class="component">
+                                ${indent}<h3>${comp.name} (${comp.component_type})</h3>
+                                <p>${comp.content.substring(0, 200)}...</p>
+                            </div>`;
+                    }
+                }
+                data.forEach(component => displayComponent(component));
+            })
+            .catch(error => console.error('Error loading JSON:', error));
+    </script>
+</body>
+</html>
